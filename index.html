@@ -663,6 +663,11 @@
       .cols-4 { grid-template-columns: repeat(2, 1fr); }
       .cols-3 { grid-template-columns: repeat(2, 1fr); }
     }
+    @media (max-width: 900px) and (orientation: landscape) {
+      .molang-main-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
     @media (max-width: 680px) {
       .nav-links { display: none; }
       .cols-2 { grid-template-columns: 1fr; }
@@ -896,7 +901,7 @@
       </p>
     </div>
 
-    <div class="media-grid cols-3 reveal rd1">
+    <div class="media-grid cols-3 molang-main-grid reveal rd1">
 
       <div class="media-grid cols-6 span-full">
         <div class="media-card mini-gif-card">
