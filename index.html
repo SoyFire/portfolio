@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — SoyFire</title>
+  <link rel="icon" type="image/png" href="imgs/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #090909;
+      --surface: #111111;
+      --border: rgba(255,255,255,0.08);
+      --text-primary: #f0f0f0;
+      --text-secondary: rgba(240,240,240,0.45);
+      --text-dim: rgba(240,240,240,0.2);
+      --gap: clamp(4rem, 8vw, 9rem);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+    body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    .page-scrollbar {
+      position: fixed;
+      top: clamp(1.25rem, 3vw, 2rem);
+      right: 0.45rem;
+      bottom: clamp(1.25rem, 3vw, 2rem);
+      width: 10px;
+      z-index: 90;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .page-scrollbar-track {
+      position: relative;
+      width: 3px;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .page-scrollbar-thumb {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      min-height: 44px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(248,248,248,0.88) 0%, rgba(190,190,190,0.58) 100%);
+      box-shadow: none;
+      cursor: grab;
+      z-index: 130;
+      pointer-events: auto;
+    }
+    .page-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(205,205,205,0.56) 100%);
+    }
+    .page-scrollbar-thumb.is-dragging {
+      cursor: grabbing;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem clamp(1.5rem, 5vw, 4rem);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(9,9,9,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      text-decoration: none;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+    }
+    .nav-logo img {
+      display: block;
+      height: 3.15rem;
+      width: auto;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    #hero {
+      height: 100svh;
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(9,9,9,0.82) 0%, rgba(9,9,9,0.55) 38%, rgba(9,9,9,0.72) 100%),
+        linear-gradient(180deg, rgba(9,9,9,0.2) 0%, rgba(9,9,9,0.35) 100%),
+        url('imgs/background_hd.png') center center / cover no-repeat;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: min(44rem, 100%);
+      padding: clamp(1.5rem, 3vw, 2.4rem);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.52) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      animation: fadeUp 1s 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-tag {
+      display: inline-block;
+      margin-bottom: 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .hero-heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 500;
+      font-size: clamp(2.4rem, 5.4vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      max-width: 12ch;
+      margin-bottom: 1rem;
+    }
+    .hero-copy {
+      max-width: 44ch;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.6rem;
+    }
+    .hero-socials {
+      display: flex;
+      align-items: center;
+      gap: 1rem 1.4rem;
+      flex-wrap: wrap;
+    }
+    .hero-socials a {
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      transition: color 0.2s;
+    }
+    .hero-socials a svg {
+      width: 0.95rem;
+      height: 0.95rem;
+      flex-shrink: 0;
+    }
+    .hero-socials a:hover { color: var(--text-secondary); }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: none; }
+      from { opacity: 0; transform: translateY(30px); }
+    }
+
+    section:not(#hero) {
+      padding: var(--gap) clamp(1.5rem, 5vw, 4rem);
+      border-top: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      column-gap: 2rem;
+      row-gap: 0.8rem;
+      align-items: start;
+      margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+    }
+    .section-index {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      padding-top: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 500;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .section-desc {
+      grid-column: 2;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      max-width: 50ch;
+      line-height: 1.75;
+    }
+
+    .media-grid {
+      display: grid;
+      gap: 1px;
+    }
+    .cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .cols-6 { grid-template-columns: repeat(6, 1fr); }
+    .span-full { grid-column: 1 / -1; }
+
+    .media-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .card-ratio {
+      aspect-ratio: 16/9;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-ratio.square { aspect-ratio: 1/1; }
+    .card-ratio.wide { aspect-ratio: 16/9; }
+    .card-ratio.mini { aspect-ratio: 1/1; }
+
+    .card-placeholder {
+      width: 100%; height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+      overflow: hidden;
+    }
+    .video-card .card-placeholder {
+      padding: 0;
+      gap: 0;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    .video-carousel {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .video-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s ease;
+      will-change: transform;
+    }
+    .video-slide {
+      position: relative;
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+    }
+    .card-placeholder video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: transparent;
+    }
+    .video-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 2.6rem;
+      height: 2.6rem;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.45);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+    }
+    .video-card:hover .video-nav,
+    .video-card:focus-within .video-nav {
+      opacity: 1;
+    }
+    .video-nav:hover {
+      background: rgba(0,0,0,0.72);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .video-nav.prev { left: 0.85rem; }
+    .video-nav.next { right: 0.85rem; }
+    .video-nav svg {
+      width: 1rem;
+      height: 1rem;
+      pointer-events: none;
+    }
+    .quad-gif-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      width: 100%;
+      height: 100%;
+    }
+    .quad-gif-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .triple-gif-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+      height: 100%;
+    }
+    .triple-gif-row img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .media-card img,
+    .lightbox-trigger {
+      cursor: zoom-in;
+    }
+    .mini-gif-card .card-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .model-fit-image {
+      max-width: 82%;
+      max-height: 82%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .card-placeholder svg {
+      width: 1.8rem; height: 1.8rem;
+      opacity: 0.2;
+      transition: opacity 0.3s;
+    }
+    .media-card:hover .card-placeholder {
+      background: #161616;
+      color: var(--text-secondary);
+    }
+    .media-card:hover .card-placeholder svg { opacity: 0.5; }
+
+    .card-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1rem 1.2rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .media-card:hover .card-info { opacity: 1; transform: none; }
+    .media-card.video-card .card-info {
+      inset: auto 0 0 0;
+      padding-top: 4.2rem;
+      padding-bottom: 0.9rem;
+      background: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .media-card.video-card .card-info-content {
+      position: relative;
+      transform: translateY(-4.5rem);
+      z-index: 1;
+    }
+    .media-card.video-card .card-info a {
+      pointer-events: auto;
+    }
+    @media (max-width: 720px) {
+      .video-nav {
+        width: 2.2rem;
+        height: 2.2rem;
+      }
+      .video-nav.prev { left: 0.55rem; }
+      .video-nav.next { right: 0.55rem; }
+    }
+    .card-label {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 0.15rem;
+    }
+    .card-label-link {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 0.15rem;
+    }
+    .card-label-link a {
+      text-decoration: none;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .card-label-link a:hover { color: var(--text-primary); }
+
+    .card-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tag-strip {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.6rem;
+    }
+    .tag {
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.85rem;
+      font-size: 0.67rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .tag:hover { border-color: rgba(255,255,255,0.3); color: var(--text-primary); }
+
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px;
+    }
+    .client-card {
+      border: 1px solid var(--border);
+      padding: 2rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: background 0.25s;
+      margin: -1px 0 0 -1px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .client-card:hover,
+    .client-card:focus-visible { background: #141414; }
+    .client-avatar {
+      width: 3.4rem; height: 3.4rem;
+      border-radius: 50%;
+      background: #1c1c1c;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+      flex-shrink: 0;
+    }
+    .client-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .client-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .client-role {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .client-role-live.is-loading {
+      color: rgba(240,240,240,0.34);
+    }
+    .client-role-live.is-live {
+      color: rgba(240,240,240,0.62);
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.2rem clamp(1.5rem, 5vw, 4rem);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .footer-links a svg {
+      width: 0.95rem;
+      height: 0.95rem;
+      flex-shrink: 0;
+    }
+    .footer-links a:hover { color: var(--text-primary); }
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    footer p {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      background: rgba(6,6,6,0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .lightbox.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .lightbox-dialog {
+      position: relative;
+      width: min(100vw, 1100px);
+      height: min(100vh, 780px);
+      display: grid;
+      place-items: center;
+    }
+    .lightbox-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,10,10,0.72);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      transition: width 0.08s linear, height 0.08s linear;
+      cursor: zoom-in;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 0.85rem;
+      right: 0.85rem;
+      z-index: 301;
+      width: 2.5rem;
+      height: 2.5rem;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.55);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .lightbox-close:hover {
+      background: rgba(0,0,0,0.8);
+      border-color: rgba(255,255,255,0.24);
+    }
+    .lightbox-close svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .rd1 { transition-delay: 0.1s; }
+    .rd2 { transition-delay: 0.2s; }
+    .rd3 { transition-delay: 0.32s; }
+
+    @media (max-width: 900px) {
+      .cols-4 { grid-template-columns: repeat(2, 1fr); }
+      .cols-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+      .cols-2 { grid-template-columns: 1fr; }
+      .cols-3 { grid-template-columns: 1fr; }
+      .cols-6 { grid-template-columns: repeat(3, 1fr); }
+      .section-header { grid-template-columns: 1fr; }
+      .section-index { display: none; }
+      .section-desc { grid-column: 1; }
+      #hero {
+        min-height: 540px;
+        justify-content: center;
+      }
+      .hero-content {
+        max-width: 100%;
+      }
+      .hero-heading {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 480px) {
+      .cols-4 { grid-template-columns: repeat(2, 1fr); }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo" aria-label="SoyFire home">
+      <img src="imgs/logo.gif" alt="SoyFire logo" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="#keyframes">Keyframes</a></li>
+      <li><a href="#molang">Molang</a></li>
+      <li><a href="#models">Models</a></li>
+      <li><a href="#clients">Clients</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-tag">About me</span>
+      <h1 class="hero-heading">SoyFire</h1>
+      <p class="hero-copy">
+        Hello! My name is SoyFire, I am a spanish Blockbench Artist, I have been making, animating and texturing models for more than 3 years now. I specialize in animating 3D models and I can also make both models and textures (including animated ones) to be used in the game of Minecraft.
+        I have advanced knowledge about the Java edition of the game, and a very basic knowledge of the Bedrock edition.
+        Scroll down to see some of my best work. I hope you enjoy it!
+      </p>
+      <div class="hero-socials">
+        <a href="https://x.com/SoyFire_">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2H21l-6.53 7.462L22.153 22h-6.017l-4.712-6.169L6.029 22H3.271l6.984-7.983L2 2h6.17l4.259 5.633zM17.277 20.35h1.527L7.34 3.563H5.702z"/>
+          </svg>
+          <span>Twitter</span>
+        </a>
+        <a href="https://discord.com/users/764115835979169802">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.317 4.369A19.791 19.791 0 0 0 15.885 3c-.191.328-.403.77-.554 1.117a18.27 18.27 0 0 0-5.314 0C9.866 3.77 9.648 3.328 9.456 3a19.736 19.736 0 0 0-4.433 1.37C2.223 8.54 1.469 12.603 1.84 16.609a19.9 19.9 0 0 0 5.433 2.724c.438-.598.828-1.233 1.165-1.903-.625-.238-1.22-.53-1.782-.872.149-.109.295-.223.436-.34 3.438 1.613 7.166 1.613 10.563 0 .143.117.289.231.437.34-.563.343-1.159.635-1.785.873.338.669.727 1.304 1.166 1.902a19.84 19.84 0 0 0 5.438-2.724c.436-4.646-.746-8.672-3.596-12.24M9.349 14.082c-1.03 0-1.875-.936-1.875-2.084s.825-2.084 1.875-2.084c1.058 0 1.894.945 1.875 2.084 0 1.148-.826 2.084-1.875 2.084m5.303 0c-1.03 0-1.875-.936-1.875-2.084s.825-2.084 1.875-2.084c1.058 0 1.894.945 1.875 2.084 0 1.148-.817 2.084-1.875 2.084"/>
+          </svg>
+          <span>Discord</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="keyframes">
+    <div class="section-header reveal">
+      <span class="section-index">01</span>
+      <h2 class="section-title">Keyframe<br/>Animation</h2>
+      <p class="section-desc">
+        Animations driven by traditional keyframes.
+      </p>
+    </div>
+
+    <div class="media-grid cols-2 reveal rd1">
+
+      <div class="media-grid cols-6 span-full">
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/navi.gif"></img></div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/huggy_walk.gif" height="75%" width="42.1875%"></img></div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/pennywise.gif"></img></div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/blueberrinni_octopusini_walk.gif"></img></div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/crouching.gif"></img></div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder"><img src="gifs/gonkito_chess.gif"></img></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-card video-card span-full">
+        <div class="card-ratio wide">
+          <div class="card-placeholder">
+            <div class="video-carousel" data-index="0">
+              <div class="video-track">
+                <div class="video-slide">
+                  <video muted playsinline controls preload="metadata">
+                    <source src="vids/periquito_intro.webm" type="video/webm" />
+                    <source src="vids/periquito_intro.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="video-slide">
+                  <video muted playsinline controls preload="metadata">
+                    <source src="vids/periquito_1.webm" type="video/webm" />
+                    <source src="vids/periquito_1.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="video-slide">
+                  <video muted playsinline controls preload="metadata">
+                    <source src="vids/periquito_2.webm" type="video/webm" />
+                    <source src="vids/periquito_2.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="video-slide">
+                  <video muted playsinline controls preload="metadata">
+                    <source src="vids/periquito_outro.webm" type="video/webm" />
+                    <source src="vids/periquito_outro.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+              <button class="video-nav prev" type="button" aria-label="Video anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+              <button class="video-nav next" type="button" aria-label="Siguiente video">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="card-info-content">
+            <span class="card-label-link"><a href="https://x.com/h4kks">Model by @H4kks</a></span>
+            <span class="card-name">Little birdie dance</span>
+            <span class="card-label"> From Twitch Rivals Survival Cup 4 (Squid Craft Games 4)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio">
+          <div class="card-placeholder">
+            <div class="quad-gif-grid">
+              <img src="gifs/cascarudo/cascarudo_idle.gif" alt="Cascarudo idle animation">
+              <img src="gifs/cascarudo/cascarudo_eat.gif" alt="Cascarudo eat animation">
+              <img src="gifs/cascarudo/cascarudo_flip.gif" alt="Cascarudo flip animation">
+              <img src="gifs/cascarudo/cascarudo_walk.gif" alt="Cascarudo walk animation">
+            </div>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label-link"><a href="https://x.com/JotasDesigns">Model by @JotasDesgins</a></span>
+          <span class="card-name">Giant Beetle Animations</span>
+          <span class="card-label"> From the Netflix show 'The Eternaut'</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio">
+          <div class="card-placeholder">
+            <img src="gifs/frontflip.gif" width="42.1875%" height="75%"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label"></span>
+          <span class="card-name">Front Flip Loop</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="molang">
+    <div class="section-header reveal">
+      <span class="section-index">02</span>
+      <h2 class="section-title">Molang &amp;<br/>Math-based Animation</h2>
+      <p class="section-desc">
+        Procedural animations powered by Molang expressions and mathematical functions.
+      </p>
+    </div>
+
+    <div class="media-grid cols-3 reveal rd1">
+
+      <div class="media-grid cols-6 span-full">
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio">
+          <div class="card-placeholder">
+            <img src="gifs/elasmo.gif" width="75%" height="75%"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label-link"><a href="https://x.com/AllosaurusBr">Model by @AllosaurusBr</a></span>
+          <span class="card-name">Elasmo Swimming Animation</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio">
+          <div class="card-placeholder">
+            <img src="gifs/soccer_ball.gif" width="42.1875%" height="75%"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label-link"><a href="https://x.com/beyond_owleaf">Model by @beyond_owleaf</a></span>
+          <span class="card-name">Soccer Ball Rolling Animation</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio">
+          <div class="card-placeholder">
+            <img src="gifs/xwing_idle.gif" width="56.25%" height="100%"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label-link"><a href="https://x.com/Jhoj4nz">Model by @Jhoj4nz</a></span>
+          <span class="card-name">XWing Idle Animation</span>
+        </div>
+      </div>
+
+      <div class="media-grid cols-2 span-full">
+        <div class="media-card">
+          <div class="card-ratio">
+            <div class="card-placeholder">GIF</div>
+          </div>
+          <div class="card-info">
+            <span class="card-label">Math Driven</span>
+            <span class="card-name">Animation Title</span>
+          </div>
+        </div>
+        <div class="media-card">
+          <div class="card-ratio">
+            <div class="card-placeholder">
+              <div class="triple-gif-row">
+                <img src="gifs/player_run.gif" alt="Molang animation 1">
+                <img src="gifs/player_walk.gif" alt="Molang animation 2">
+                <img src="gifs/player_walk_backwards.gif" alt="Molang animation 3">
+              </div>
+            </div>
+          </div>
+          <div class="card-info">
+            <span class="card-label-link"><a href="https://x.com/Navi10Its">Model by @Navi10Its</a></span>
+            <span class="card-name">Movement Animation</span>
+            <span class="card-label">Speed can be changed through the ground_speed query</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="models">
+    <div class="section-header reveal">
+      <span class="section-index">03</span>
+      <h2 class="section-title">3D<br/>Models</h2>
+      <p class="section-desc">
+        3D models made in Blockbench.
+      </p>
+    </div>
+
+    <div class="media-grid cols-4 reveal rd1">
+
+      <div class="media-grid cols-6 span-full">
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+        <div class="media-card mini-gif-card">
+          <div class="card-ratio mini">
+            <div class="card-placeholder">GIF</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio square">
+          <div class="card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            Imagen
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label">Model</span>
+          <span class="card-name">Model Name</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio square">
+          <div class="card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            Imagen
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-label">Model</span>
+          <span class="card-name">Model Name</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio square">
+          <div class="card-placeholder">
+            <img class="model-fit-image" src="imgs/repo.png" alt="Repo model"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-name">R.E.P.O Player Model</span>
+        </div>
+      </div>
+
+      <div class="media-card">
+        <div class="card-ratio square">
+          <div class="card-placeholder">
+            <img class="model-fit-image" src="imgs/chef_ghost.png" alt="Chef Ghost model"></img>
+          </div>
+        </div>
+        <div class="card-info">
+          <span class="card-name">Chef Ghost</span>
+          <span class="card-label">Chef Ghost model inspired by Luigi's Mansion games</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="clients">
+    <div class="section-header reveal">
+      <span class="section-index">05</span>
+      <h2 class="section-title">Clients &amp;<br/>Collaborators</h2>
+      <p class="section-desc">
+        People I have had the pleasure to work with.
+      </p>
+    </div>
+
+    <div class="clients-grid reveal rd1">
+
+      <a class="client-card" href="https://www.youtube.com/@Spreen">
+        <div class="client-avatar">
+          <img src="imgs/spreen.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Spreen</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/spreen/realtime">8.23M Youtuber/Streamer</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@FlexVega">
+        <div class="client-avatar">
+          <img src="imgs/flexvega.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">FlexVega</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/flexvega/realtime">7.39M Youtuber</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@Calcetinlol">
+        <div class="client-avatar">
+          <img src="imgs/calce.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Calce</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/calcetinlol/realtime">3.89M Youtuber</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@LaosOneVieww">
+        <div class="client-avatar">
+          <img src="imgs/laos.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Laos</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/laosonevieww/realtime">2.57M Youtuber</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@Aquisi_">
+        <div class="client-avatar">
+          <img src="imgs/aquisi.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Aquisi</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/aquisi_/realtime">1.79M Youtuber</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@Shadoune666">
+        <div class="client-avatar">
+          <img src="imgs/shadoune666.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Shadoune666</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/shadoune666/realtime">819K Youtuber/Streamer</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@KendoMurft">
+        <div class="client-avatar">
+          <img src="imgs/kendomurft.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">KendoMurft</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/kendomurft/realtime">740K Youtuber/Streamer</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@FishChipsYT">
+        <div class="client-avatar">
+          <img src="imgs/fishchips.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">FishChips</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/fishchipsyt/realtime">717K Youtuber/Streamer</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@TivoTabo">
+        <div class="client-avatar">
+          <img src="imgs/tivotabo.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">TivoTabo</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/tivotabo/realtime">497K Youtuber</span>
+      </a>
+
+      <a class="client-card" href="https://www.youtube.com/@SoarinngChu">
+        <div class="client-avatar">
+          <img src="imgs/soarinngchu.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">SoarinngChu</span>
+        <span class="client-role client-role-live is-loading" data-youtube-source="https://socialblade.com/youtube/handle/soarinngchu/realtime">229K Youtuber/Streamer</span>
+      </a>
+
+      <a class="client-card" href="https://x.com/EufoniaStudio">
+        <div class="client-avatar">
+          <img src="imgs/eufonia.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Eufonia Studio</span>
+        <span class="client-role">129K Event Studio</span>
+      </a>
+
+      <a class="client-card" href="https://x.com/HexaCreators">
+        <div class="client-avatar">
+          <img src="imgs/hexa.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">Hexa Creators</span>
+        <span class="client-role">14K Event Studio</span>
+      </a>
+
+      <a class="client-card" href="https://x.com/GonkoDev">
+        <div class="client-avatar">
+          <img src="imgs/gonko.jpg" alt="Client Name photo">
+        </div>
+        <span class="client-name">GonkoDev</span>
+        <span class="client-role">1.2K Event Studio</span>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-links">
+      <a href="https://x.com/SoyFire_">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2H21l-6.53 7.462L22.153 22h-6.017l-4.712-6.169L6.029 22H3.271l6.984-7.983L2 2h6.17l4.259 5.633zM17.277 20.35h1.527L7.34 3.563H5.702z"/>
+        </svg>
+        <span>Twitter</span>
+      </a>
+      <a href="https://discord.com/users/764115835979169802">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.317 4.369A19.791 19.791 0 0 0 15.885 3c-.191.328-.403.77-.554 1.117a18.27 18.27 0 0 0-5.314 0C9.866 3.77 9.648 3.328 9.456 3a19.736 19.736 0 0 0-4.433 1.37C2.223 8.54 1.469 12.603 1.84 16.609a19.9 19.9 0 0 0 5.433 2.724c.438-.598.828-1.233 1.165-1.903-.625-.238-1.22-.53-1.782-.872.149-.109.295-.223.436-.34 3.438 1.613 7.166 1.613 10.563 0 .143.117.289.231.437.34-.563.343-1.159.635-1.785.873.338.669.727 1.304 1.166 1.902a19.84 19.84 0 0 0 5.438-2.724c.436-4.646-.746-8.672-3.596-12.24M9.349 14.082c-1.03 0-1.875-.936-1.875-2.084s.825-2.084 1.875-2.084c1.058 0 1.894.945 1.875 2.084 0 1.148-.826 2.084-1.875 2.084m5.303 0c-1.03 0-1.875-.936-1.875-2.084s.825-2.084 1.875-2.084c1.058 0 1.894.945 1.875 2.084 0 1.148-.817 2.084-1.875 2.084"/>
+        </svg>
+        <span>Discord</span>
+      </a>
+    </div>
+    <p>Blockbench Artist — Animation &amp; 3D Modeling</p>
+  </footer>
+
+  <div class="lightbox" id="media-lightbox" aria-hidden="true">
+    <div class="lightbox-dialog">
+      <button class="lightbox-close" type="button" aria-label="Cerrar vista ampliada">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+      <img class="lightbox-image" alt="" />
+    </div>
+  </div>
+
+  <div class="page-scrollbar" aria-hidden="true">
+    <div class="page-scrollbar-track" id="page-scrollbar-track">
+      <div class="page-scrollbar-thumb" id="page-scrollbar-thumb"></div>
+    </div>
+  </div>
+
+  <script>
+    const nav = document.getElementById('navbar');
+    const scrollbarTrack = document.getElementById('page-scrollbar-track');
+    const scrollbarThumb = document.getElementById('page-scrollbar-thumb');
+    let isDraggingScrollbar = false;
+    let scrollbarDragOffset = 0;
+    let scrollbarAnimationFrame = null;
+
+    const updateScrollbar = () => {
+      const viewportHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const maxScroll = Math.max(1, documentHeight - viewportHeight);
+      const trackHeight = scrollbarTrack.offsetHeight;
+      const thumbHeight = Math.max(44, (viewportHeight / documentHeight) * trackHeight);
+      const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+      const progress = window.scrollY / maxScroll;
+      const thumbTop = maxThumbTop * progress;
+
+      scrollbarThumb.style.height = `${thumbHeight}px`;
+      scrollbarThumb.style.top = `${thumbTop}px`;
+      scrollbarTrack.style.opacity = documentHeight > viewportHeight ? '1' : '0';
+    };
+
+    const animateScrollTo = (targetTop) => {
+      if (scrollbarAnimationFrame !== null) {
+        cancelAnimationFrame(scrollbarAnimationFrame);
+        scrollbarAnimationFrame = null;
+      }
+
+      const startTop = window.scrollY;
+      const distance = targetTop - startTop;
+
+      if (Math.abs(distance) < 2) {
+        window.scrollTo({ top: targetTop, behavior: 'auto' });
+        return;
+      }
+
+      const duration = clamp(Math.abs(distance) * 0.18, 70, 240);
+      const startTime = performance.now();
+
+      const step = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        window.scrollTo({
+          top: startTop + distance * eased,
+          behavior: 'auto'
+        });
+
+        if (progress < 1) {
+          scrollbarAnimationFrame = requestAnimationFrame(step);
+        } else {
+          scrollbarAnimationFrame = null;
+        }
+      };
+
+      scrollbarAnimationFrame = requestAnimationFrame(step);
+    };
+
+    const scrollFromTrackPosition = (clientY, smooth = false) => {
+      const rect = scrollbarTrack.getBoundingClientRect();
+      const thumbHeight = scrollbarThumb.offsetHeight;
+      const trackHeight = rect.height;
+      const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+      const relativeY = clamp(clientY - rect.top - thumbHeight / 2, 0, maxThumbTop);
+      const ratio = maxThumbTop > 0 ? relativeY / maxThumbTop : 0;
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const targetTop = ratio * maxScroll;
+
+      if (smooth) {
+        animateScrollTo(targetTop);
+      } else {
+        if (scrollbarAnimationFrame !== null) {
+          cancelAnimationFrame(scrollbarAnimationFrame);
+          scrollbarAnimationFrame = null;
+        }
+        window.scrollTo({ top: targetTop, behavior: 'auto' });
+      }
+    };
+
+    const scrollFromThumbTop = (thumbTop, smooth = false) => {
+      const rect = scrollbarTrack.getBoundingClientRect();
+      const thumbHeight = scrollbarThumb.offsetHeight;
+      const maxThumbTop = Math.max(0, rect.height - thumbHeight);
+      const clampedThumbTop = clamp(thumbTop, 0, maxThumbTop);
+      const ratio = maxThumbTop > 0 ? clampedThumbTop / maxThumbTop : 0;
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const targetTop = ratio * maxScroll;
+
+      if (smooth) {
+        animateScrollTo(targetTop);
+      } else {
+        if (scrollbarAnimationFrame !== null) {
+          cancelAnimationFrame(scrollbarAnimationFrame);
+          scrollbarAnimationFrame = null;
+        }
+        window.scrollTo({ top: targetTop, behavior: 'auto' });
+      }
+    };
+
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+      updateScrollbar();
+    }, { passive: true });
+    window.addEventListener('resize', updateScrollbar, { passive: true });
+
+    scrollbarTrack.addEventListener('click', (event) => {
+      if (event.target === scrollbarThumb) return;
+      scrollFromTrackPosition(event.clientY, true);
+    });
+
+    const startScrollbarDrag = (event, stickToPointer = false) => {
+      event.preventDefault();
+      isDraggingScrollbar = true;
+      scrollbarDragOffset = stickToPointer
+        ? scrollbarThumb.offsetHeight / 2
+        : event.clientY - scrollbarThumb.getBoundingClientRect().top;
+      scrollbarThumb.classList.add('is-dragging');
+      const trackTop = scrollbarTrack.getBoundingClientRect().top;
+      scrollFromThumbTop(event.clientY - trackTop - scrollbarDragOffset, false);
+    };
+
+    scrollbarThumb.addEventListener('mousedown', (event) => {
+      startScrollbarDrag(event, false);
+    });
+
+    scrollbarTrack.addEventListener('mousedown', (event) => {
+      if (event.target === scrollbarThumb) return;
+      startScrollbarDrag(event, true);
+    });
+
+    window.addEventListener('mousemove', (event) => {
+      if (!isDraggingScrollbar) return;
+      const trackTop = scrollbarTrack.getBoundingClientRect().top;
+      scrollFromThumbTop(event.clientY - trackTop - scrollbarDragOffset, false);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDraggingScrollbar) return;
+      isDraggingScrollbar = false;
+      scrollbarThumb.classList.remove('is-dragging');
+    });
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    document.querySelectorAll('.video-carousel').forEach((carousel) => {
+      const track = carousel.querySelector('.video-track');
+      const slides = Array.from(carousel.querySelectorAll('.video-slide'));
+      const videos = slides.map((slide) => slide.querySelector('video'));
+      const prevButton = carousel.querySelector('.video-nav.prev');
+      const nextButton = carousel.querySelector('.video-nav.next');
+      let index = Number(carousel.dataset.index || 0);
+      const audioState = {
+        muted: videos[index]?.muted ?? true,
+        volume: videos[index]?.volume ?? 1
+      };
+
+      const applyAudioState = (video) => {
+        video.muted = audioState.muted;
+        video.volume = audioState.volume;
+      };
+
+      const goToSlide = (nextIndex) => {
+        index = nextIndex;
+        syncCarousel();
+      };
+
+      const syncCarousel = () => {
+        track.style.transform = `translateX(-${index * 100}%)`;
+        videos.forEach((video, videoIndex) => {
+          if (videoIndex === index) {
+            applyAudioState(video);
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      };
+
+      prevButton.addEventListener('click', () => {
+        goToSlide((index - 1 + slides.length) % slides.length);
+      });
+
+      nextButton.addEventListener('click', () => {
+        goToSlide((index + 1) % slides.length);
+      });
+
+      carousel.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          goToSlide((index - 1 + slides.length) % slides.length);
+        }
+        if (event.key === 'ArrowRight') {
+          goToSlide((index + 1) % slides.length);
+        }
+      });
+
+      videos.forEach((video) => {
+        video.addEventListener('volumechange', () => {
+          audioState.muted = video.muted;
+          audioState.volume = video.volume;
+        });
+        video.addEventListener('ended', () => {
+          goToSlide((index + 1) % slides.length);
+        });
+      });
+      syncCarousel();
+    });
+
+    const lightbox = document.getElementById('media-lightbox');
+    const lightboxDialog = lightbox.querySelector('.lightbox-dialog');
+    const lightboxImage = lightbox.querySelector('.lightbox-image');
+    const lightboxClose = lightbox.querySelector('.lightbox-close');
+    let lightboxZoom = 1;
+    let lightboxMaxZoom = 1;
+    let lightboxBaseWidth = 0;
+    let lightboxBaseHeight = 0;
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    const updateLightboxBaseSize = () => {
+      const naturalWidth = lightboxImage.naturalWidth || 1;
+      const naturalHeight = lightboxImage.naturalHeight || 1;
+      const maxWidth = Math.max(1, window.innerWidth);
+      const maxHeight = Math.max(1, window.innerHeight);
+      const fitScale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 1);
+      lightboxBaseWidth = naturalWidth * fitScale;
+      lightboxBaseHeight = naturalHeight * fitScale;
+      lightboxMaxZoom = Math.max(1, Math.min(maxWidth / lightboxBaseWidth, maxHeight / lightboxBaseHeight));
+      lightboxZoom = Math.min(lightboxZoom, lightboxMaxZoom);
+    };
+
+    const syncLightboxZoom = () => {
+      lightboxDialog.style.width = `${lightboxBaseWidth * lightboxZoom}px`;
+      lightboxDialog.style.height = `${lightboxBaseHeight * lightboxZoom}px`;
+      lightboxDialog.style.transform = '';
+      lightboxImage.style.cursor = lightboxZoom > 1 ? 'zoom-out' : 'zoom-in';
+    };
+
+    const openLightbox = (image) => {
+      lightboxZoom = 1;
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt || '';
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => {
+        updateLightboxBaseSize();
+        syncLightboxZoom();
+      });
+    };
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lightboxImage.removeAttribute('src');
+      lightboxImage.alt = '';
+      lightboxZoom = 1;
+      lightboxBaseWidth = 0;
+      lightboxBaseHeight = 0;
+      lightboxDialog.style.width = '';
+      lightboxDialog.style.height = '';
+      lightboxDialog.style.transform = '';
+      syncLightboxZoom();
+      document.body.style.overflow = '';
+    };
+
+    document.querySelectorAll('.media-card').forEach((card) => {
+      const quadImages = card.querySelectorAll('.quad-gif-grid img');
+      if (quadImages.length) {
+        quadImages.forEach((image) => {
+          image.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openLightbox(image);
+          });
+        });
+        return;
+      }
+
+      const tripleImages = card.querySelectorAll('.triple-gif-row img');
+      if (tripleImages.length) {
+        tripleImages.forEach((image) => {
+          image.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openLightbox(image);
+          });
+        });
+        return;
+      }
+
+      const image = card.querySelector('.card-placeholder img');
+      if (!image) return;
+
+      card.classList.add('lightbox-trigger');
+
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('a, button')) return;
+        openLightbox(image);
+      });
+    });
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    lightboxImage.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      const delta = event.deltaY < 0 ? 0.18 : -0.18;
+      updateLightboxBaseSize();
+      lightboxZoom = clamp(lightboxZoom + delta, 1, lightboxMaxZoom);
+      syncLightboxZoom();
+    }, { passive: false });
+
+    window.addEventListener('resize', () => {
+      if (!lightbox.classList.contains('is-open')) return;
+      updateLightboxBaseSize();
+      syncLightboxZoom();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+        closeLightbox();
+      }
+    });
+
+    const youtubeClientRoles = document.querySelectorAll('.client-role-live[data-youtube-source]');
+
+    const extractSubscriberCount = (html) => {
+      const plainText = html
+        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      const liveMatch = plainText.match(/YouTube Live Subscriber Count[^0-9]*([0-9][0-9,.\s]{1,20})\s+subscribers/i);
+      if (liveMatch) {
+        return liveMatch[1].replace(/\s+/g, '');
+      }
+
+      const fallbackMatch = plainText.match(/subscribers\s+([0-9][0-9,.\s]{1,20})\s+views/i);
+      if (fallbackMatch) {
+        return fallbackMatch[1].replace(/\s+/g, '');
+      }
+
+      return null;
+    };
+
+    const updateYoutubeClientCounts = async () => {
+      await Promise.all(Array.from(youtubeClientRoles).map(async (role) => {
+        const source = role.dataset.youtubeSource;
+        if (!source) return;
+
+        try {
+          const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(source)}`);
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+          }
+
+          const html = await response.text();
+          const count = extractSubscriberCount(html);
+          if (!count) {
+            throw new Error('Subscriber count not found');
+          }
+
+          role.textContent = `${count} subscribers`;
+          role.classList.remove('is-loading');
+          role.classList.add('is-live');
+        } catch (error) {
+          role.classList.remove('is-loading');
+        }
+      }));
+    };
+
+    updateYoutubeClientCounts();
+    updateScrollbar();
+  </script>
+
+</body>
+</html>
