@@ -437,6 +437,40 @@
       }
       .video-nav.prev { left: 0.55rem; }
       .video-nav.next { right: 0.55rem; }
+      .media-card:not(.video-card) .card-info {
+        padding: 0.75rem 0.9rem;
+        pointer-events: none;
+      }
+      .media-card:not(.video-card) .card-label,
+      .media-card:not(.video-card) .card-label-link,
+      .media-card:not(.video-card) .card-label-link a {
+        font-size: 0.56rem;
+        letter-spacing: 0.12em;
+      }
+      .media-card:not(.video-card) .card-name {
+        font-size: 0.82rem;
+        letter-spacing: 0.05em;
+      }
+      .media-card.video-card .card-info {
+        inset: 0 auto auto 0;
+        right: auto;
+        bottom: auto;
+        padding: 0.75rem 3.3rem 0 0.85rem;
+      }
+      .media-card.video-card .card-info-content {
+        transform: none;
+      }
+      .media-card.video-card .card-label,
+      .media-card.video-card .card-label-link,
+      .media-card.video-card .card-label-link a {
+        font-size: 0.54rem;
+        letter-spacing: 0.12em;
+        margin-bottom: 0.12rem;
+      }
+      .media-card.video-card .card-name {
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+      }
     }
     .card-label {
       display: block;
