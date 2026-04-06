@@ -697,6 +697,16 @@
       .cols-4 { grid-template-columns: repeat(2, 1fr); }
       .cols-3 { grid-template-columns: repeat(2, 1fr); }
     }
+    @media (min-width: 681px) and (max-width: 900px) {
+      #hero {
+        justify-content: center;
+        align-items: center;
+      }
+      .hero-content {
+        width: min(42rem, 100%);
+        margin-inline: auto;
+      }
+    }
     @media (max-width: 900px) and (orientation: landscape) {
       .molang-main-grid {
         grid-template-columns: repeat(3, 1fr);
